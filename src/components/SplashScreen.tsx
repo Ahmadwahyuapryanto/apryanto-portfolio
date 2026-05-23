@@ -18,8 +18,8 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void; k
   const textColor = theme === 'dark' ? 'text-white' : 'text-zinc-900';
 
   const imgUrl = theme === 'dark' 
-    ? 'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("img/black.jpg")' 
-    : 'linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)), url("img/white.png")';
+    ? 'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("/img/black.jpg")' 
+    : 'linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)), url("/img/white.png")';
 
   const backgroundStyle = {
     backgroundImage: imgUrl,

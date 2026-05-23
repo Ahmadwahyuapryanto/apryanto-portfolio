@@ -9,7 +9,7 @@ const projects = [
     title: 'LSES UNTIRTA',
     category: 'Branding / Logo Design',
     description: 'Desain logo profesional untuk organisasi kampus LSES UNTIRTA yang mencerminkan identitas akademik dan semangat kolaboratif.',
-    image: 'img/logo2.jpg',
+    image: '/img/logo2.jpg',
     featured: true,
   },
   {
@@ -17,7 +17,7 @@ const projects = [
     title: 'POPDA & PAPERDA',
     category: 'Branding / Competition',
     description: 'Partisipasi dalam kompetisi desain logo POPDA & PAPERDA dengan konsep yang dinamis dan enerjik sesuai semangat olahraga.',
-    image: 'img/logo1.png',
+    image: '/img/logo1.png',
     featured: false,
   },
   {
@@ -25,7 +25,7 @@ const projects = [
     title: 'Sambara Label',
     category: 'Label Design',
     description: 'Pengembangan label kemasan untuk produk Sambara, fokus pada estetika visual yang menggugah selera dan informatif.',
-    image: 'img/Kemasan1.jpg',
+    image: '/img/Kemasan1.jpg',
     featured: false,
   },
   {
@@ -33,7 +33,7 @@ const projects = [
     title: 'Seminar HMSI',
     category: 'Graphic Design',
     description: 'Desain flyer publikasi untuk Seminar Nasional HMSI dengan layout yang bersih, modern, dan informatif.',
-    image: 'img/flayer3.jpg',
+    image: '/img/flayer3.jpg',
     featured: true,
   },
   {
@@ -41,7 +41,7 @@ const projects = [
     title: 'E-Commerce App',
     category: 'UI/UX Design',
     description: 'Simulasi desain antarmuka aplikasi belanja online yang memudahkan pengguna dalam bernavigasi dan bertransaksi.',
-    image: 'img/uiux1.png',
+    image: '/img/uiux1.png',
     featured: false,
   },
   {
@@ -49,7 +49,7 @@ const projects = [
     title: 'Flayer Peringatan Pancasila',
     category: 'Graphic Design',
     description: 'Desain flyer Peringatan Hari Pancasila dengan pendekatan visual yang kuat dan simbolik untuk memperingati nilai-nilai dasar bangsa.',
-    image: 'img/flayer2.jpg',
+    image: '/img/flayer2.jpg',
     featured: true,
   },
   {
@@ -57,7 +57,7 @@ const projects = [
     title: 'Flayer Recruitment HMSI',
     category: 'Graphic Design',
     description: 'Desain flyer untuk kegiatan rekrutmen HMSI dengan visual yang menarik dan informasi yang jelas.',
-    image: 'img/flayer1.jpg',
+    image: '/img/flayer1.jpg',
     featured: false,
   },
 ];
