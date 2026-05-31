@@ -1,8 +1,117 @@
 import React, { useRef } from 'react';
-import { motion, useScroll, useTransform, AnimatePresence } from 'motion/react';
-import { Github, Instagram, Linkedin, Mail, Download, ArrowUpRight } from 'lucide-react';
+import { motion, useScroll, useTransform, AnimatePresence, useMotionValue, useSpring, useAnimationFrame } from 'motion/react';
+import { Github, Instagram, Linkedin, Mail, Download, ArrowUpRight, Sparkles } from 'lucide-react';
 
 const skills = ['FIGMA', 'ADOBE PS/AI', 'CANVA', 'LARAVEL', 'EXCEL', 'FLUTTER', 'WORD'];
+
+// --- KOMPONEN PHOTOCARD 3D INTERAKTIF DITAMBAHKAN DI SINI ---
+function InteractivePhotocard() {
+  const cardRef = useRef<HTMLDivElement>(null);
+  
+  const isHovered = useMotionValue(0);
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  const springConfig = { damping: 20, stiffness: 150 };
+  const springX = useSpring(mouseX, springConfig);
+  const springY = useSpring(mouseY, springConfig);
+
+  const rotateX = useTransform(springY, [-0.5, 0.5], ["15deg", "-15deg"]);
+  const rotateY = useTransform(springX, [-0.5, 0.5], ["-15deg", "15deg"]);
+
+  const glossX = useTransform(springX, [-0.5, 0.5], ["0%", "100%"]);
+  const glossY = useTransform(springY, [-0.5, 0.5], ["0%", "100%"]);
+
+  useAnimationFrame((t) => {
+    if (isHovered.get() === 0) {
+      const swayX = Math.sin(t / 1000) * 0.1;
+      const swayY = Math.cos(t / 1200) * 0.1;
+      mouseX.set(swayX);
+      mouseY.set(swayY);
+    }
+  });
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    
+    mouseX.set((e.clientX - centerX) / rect.width);
+    mouseY.set((e.clientY - centerY) / rect.height);
+  };
+
+  const barcodeLines = [2, 4, 2, 2, 6, 2, 4, 2, 2, 4, 6, 2, 2, 4, 2, 4, 2, 2, 6];
+
+  return (
+    <div style={{ perspective: 1200 }} className="w-full max-w-[320px] mx-auto z-10 flex justify-center items-center">
+      <motion.div
+        ref={cardRef}
+        drag
+        dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
+        dragElastic={0.65}
+        onMouseMove={handleMouseMove}
+        onMouseEnter={() => isHovered.set(1)}
+        onMouseLeave={() => isHovered.set(0)}
+        style={{
+          rotateX,
+          rotateY,
+          transformStyle: "preserve-3d",
+        }}
+        whileTap={{ scale: 0.95 }}
+        className="rounded-[2rem] border border-zinc-200 dark:border-zinc-800 bg-white/80 dark:bg-[#0a0a0a]/90 backdrop-blur-xl p-8 flex flex-col relative shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] cursor-grab active:cursor-grabbing w-full"
+      >
+        <motion.div
+          className="pointer-events-none absolute inset-0 rounded-[2rem] opacity-30 mix-blend-overlay dark:mix-blend-color-dodge transition-opacity duration-500 z-50"
+          style={{
+            background: useTransform(
+              [glossX, glossY],
+              ([gx, gy]) => `radial-gradient(circle at ${gx} ${gy}, rgba(255,255,255,0.7) 0%, transparent 60%)`
+            ),
+          }}
+        />
+
+        <motion.div style={{ translateZ: 30 }} className="flex justify-between items-center w-full mb-8 text-[10px] font-mono text-zinc-500 tracking-widest uppercase">
+          <div className="flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            S1 SI • 2026
+          </div>
+          <Sparkles size={14} className="text-zinc-400 dark:text-zinc-600" />
+        </motion.div>
+
+        <motion.div style={{ translateZ: 50 }} className="w-32 h-32 mx-auto rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800 mb-6 bg-zinc-100 dark:bg-zinc-900 grayscale hover:grayscale-0 transition-all duration-500 shadow-2xl relative">
+          <img src="/img/black.jpg" alt="Profile" className="w-full h-full object-cover pointer-events-none select-none" draggable="false" />
+        </motion.div>
+
+        <motion.h3 style={{ translateZ: 40 }} className="text-center text-lg font-black text-zinc-900 dark:text-white uppercase tracking-wider mb-2 pointer-events-none select-none">
+          Ahmad Wahyu A.
+        </motion.h3>
+        <motion.p style={{ translateZ: 30 }} className="text-center text-[9px] text-zinc-500 font-mono tracking-widest uppercase mb-6 pointer-events-none select-none">
+          Fullstack Engineer • Student
+        </motion.p>
+
+        <motion.div style={{ translateZ: 40 }} className="mx-auto px-5 py-2 rounded-full border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 text-[10px] text-zinc-600 dark:text-zinc-400 font-mono mb-8 shadow-lg pointer-events-none select-none">
+          &gt;_ apryanto.dev
+        </motion.div>
+
+        <motion.div style={{ translateZ: 20 }} className="w-full h-px bg-zinc-200 dark:bg-zinc-800 mb-6" />
+
+        <motion.div style={{ translateZ: 30 }} className="flex flex-col items-center pointer-events-none select-none">
+          <div className="flex justify-center gap-[2px] h-8 opacity-60 mb-2">
+            {barcodeLines.map((width, i) => (
+              <div key={i} className="bg-zinc-400 dark:bg-zinc-500 rounded-sm" style={{ width: `${width}px` }} />
+            ))}
+          </div>
+          <p className="text-[7px] text-zinc-500 font-mono tracking-[0.3em] uppercase">
+            *AW-SI2026*
+          </p>
+        </motion.div>
+      </motion.div>
+    </div>
+  );
+}
+// --- SELESAI KOMPONEN PHOTOCARD ---
+
 
 export default function About() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -21,111 +130,71 @@ export default function About() {
     <section 
       ref={containerRef}
       id="about" 
-      className="relative min-h-[180vh] bg-white dark:bg-zinc-950 pt-0 pb-16 overflow-hidden"
-    >
-      {/* SECTION 1: THE NAME */}
-      <div className="sticky top-0 h-[80vh] flex flex-col justify-center items-center pointer-events-none">
-        {/* Background Texture */}
-        <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05]" 
-             style={{ backgroundImage: 'radial-gradient(circle, currentColor 1px, transparent 1px)', backgroundSize: '30px 30px' }} 
-        />
-        
-        {/* Floating Decorative Elements */}
-        <motion.div
-           style={{ y: useTransform(scrollYProgress, [0, 1], [-200, 200]), rotate: 45 }}
-           className="absolute top-1/4 left-[10%] w-12 h-12 border-2 border-blue-600/20 rounded-lg"
-        />
-        <motion.div
-           style={{ y: useTransform(scrollYProgress, [0, 1], [150, -150]), rotate: -15, scale: 1.5 }}
-           className="absolute bottom-1/4 right-[15%] text-blue-600/20"
-        >
-          <svg width="60" height="60" viewBox="0 0 100 100" fill="currentColor">
-            <path d="M50 0L55 45L100 50L55 55L50 100L45 55L0 50L45 45Z" />
-          </svg>
-        </motion.div>
-        
-        {/* More decorative items */}
-        <motion.div
-           style={{ x: useTransform(scrollYProgress, [0, 1], [-100, 100]) }}
-           className="absolute top-[10%] right-[10%] text-[8px] font-mono tracking-widest text-zinc-400 dark:text-zinc-600 uppercase"
-        >
-          [ PROJECT_ARCHIVE_2025 ]
-        </motion.div>
+      className="relative min-h-[180vh] bg-white dark:bg-zinc-950 pt-0 pb-16 overflow-hidden">
 
-        <motion.div
-           style={{ x: useTransform(scrollYProgress, [0, 1], [100, -100]) }}
-           className="absolute bottom-[20%] left-[5%] text-[8px] font-mono tracking-widest text-zinc-400 dark:text-zinc-600 uppercase"
-        >
-          SYNERGY / BALANCE / FLOW
-        </motion.div>
-
-        <motion.div
-           style={{ y: useTransform(scrollYProgress, [0, 1], [0, -300]), opacity: useTransform(scrollYProgress, [0, 0.2], [0.3, 0]) }}
-           className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center"
-        >
-          <span className="text-[10px] font-bold tracking-[0.5em] text-zinc-400 mb-2">SCROLL</span>
-          <div className="w-px h-20 bg-linear-to-b from-blue-600/50 to-transparent" />
-        </motion.div>
-
-        {/* Small floating dots/squares */}
-        <motion.div 
-          animate={{ rotate: 360 }}
-          transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-          className="absolute top-20 left-[20%] w-2 h-2 bg-blue-600/20"
-        />
-        <motion.div 
-          animate={{ x: [0, 50, 0] }}
-          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-40 right-[15%] w-8 h-px bg-zinc-400/20"
-        />
-        <motion.div 
-          className="absolute bottom-20 right-[25%] text-[6px] font-mono opacity-20 dark:opacity-10"
-        >
-          0x42 0x61 0x6C 0x61 0x6E 0x63 0x65
-        </motion.div>
-
-        <motion.div style={{ x: xLeft }} className="whitespace-nowrap">
-          <h2 className="text-[15vw] font-black italic uppercase leading-none text-zinc-100 dark:text-zinc-900/20 outline-text">
-            AHMAD WAHYU APRYANTO • AHMAD WAHYU APRYANTO •
-          </h2>
-        </motion.div>
-        
-        {/* Animated Background Label */}
-        <motion.div
-           style={{ opacity: useTransform(scrollYProgress, [0, 0.5], [0, 1]) }}
-           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -rotate-12 pointer-events-none"
-        >
-          <span className="text-[12vw] font-black text-blue-600/5 uppercase leading-none">Apryanto</span>
-        </motion.div>
-        
-        <motion.div 
-          style={{ scale, rotate }}
-          className="my-8 z-10 relative"
-        >
-          <div className="absolute -inset-10 bg-blue-600/5 blur-[100px] rounded-full" />
-          <h3 className="text-3xl md:text-7xl font-black text-blue-600 uppercase tracking-tighter text-center relative z-10">
-            Creative <br /> Identity
-          </h3>
-          <motion.div
-            animate={{ rotate: [0, 90, 180, 270, 360] }}
-            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-            className="absolute -top-6 -right-6 text-blue-600/30"
+      {/* SECTION 1: CREATIVE IDENTITY & PHOTOCARD (Ditambahkan di sini) */}
+      <div className="relative z-20 pt-32 pb-16 px-6 md:px-12">
+        {/* Kita tambahkan justify-center agar posisi di tengah */}
+<div className="max-w-5xl mx-auto flex flex-col lg:flex-row items-start justify-center gap-8 lg:gap-16 relative">
+          
+          {/* Bagian Kiri: Teks & Badges */}
+          <motion.div 
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="flex-1 max-w-2xl"
           >
-            <svg width="40" height="40" viewBox="0 0 100 100">
-              <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" strokeWidth="2" strokeDasharray="10 10" />
-            </svg>
-          </motion.div>
-        </motion.div>
+            <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tight text-zinc-900 dark:text-white mb-6">
+              I'M Apryanto
+            </h2>
 
-        <motion.div style={{ x: xRight }} className="whitespace-nowrap">
-          <h2 className="text-[15vw] font-black italic uppercase leading-none text-blue-600/5 dark:text-blue-500/5 outline-text">
-            DESIGNER • DEVELOPER • DESIGNER • DEVELOPER •
-          </h2>
-        </motion.div>
+            <div className="flex flex-wrap items-center gap-3 mb-8">
+              <div className="px-4 py-2 rounded-full border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 text-xs font-mono text-zinc-500 dark:text-zinc-400">
+                S1 Sistem Informasi | 2026
+              </div>
+              <div className="px-4 py-2 rounded-full border border-blue-500/30 bg-blue-500/10 text-xs font-bold tracking-wide text-blue-600 dark:text-blue-500 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+                Available For Work
+              </div>
+              <div className="px-4 py-2 rounded-full border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 text-xs font-mono text-zinc-500 dark:text-zinc-400">
+                apryanto.dev
+              </div>
+            </div>
+
+            <p className="text-zinc-600 dark:text-zinc-400 text-sm md:text-base leading-relaxed max-w-lg mb-10">
+              Membangun sistem informasi dan aplikasi modern dengan antarmuka yang bersih, responsif, dan elegan. 
+              Mengubah ide kreatif menjadi pengalaman digital fungsional.
+            </p>
+
+            <div className="flex flex-wrap gap-3">
+              {['Flutter', 'Laravel', 'Tailwind CSS'].map((tech) => (
+                <span 
+                  key={tech} 
+                  className="px-4 py-2 border border-zinc-200 dark:border-zinc-800 rounded-lg text-xs font-medium text-zinc-600 dark:text-zinc-400 bg-zinc-50 dark:bg-zinc-900/30"
+                >
+                  {tech}
+                </span>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Bagian Kanan: 3D Layered Photocard */}
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="w-full lg:w-1/2 flex justify-center lg:justify-end"
+          >
+            <InteractivePhotocard />
+          </motion.div>
+
+        </div>
       </div>
 
-      {/* SECTION 2: THE STORY TEXT */}
-      <div className="relative z-20 max-w-4xl mx-auto px-6 py-20">
+      {/* SECTION 2: THE STORY TEXT (Tidak ada yang diubah di bawah ini) */}
+      <div className="relative z-20 max-w-5xl mx-auto px-6 py-18">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
